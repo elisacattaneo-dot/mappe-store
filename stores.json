@@ -1,0 +1,602 @@
+[
+    {
+        "name": "ARESE",
+        "slug": "arese",
+        "city": "ARESE",
+        "region": "Lombardia",
+        "lat": 45.46857,
+        "lng": 9.19101,
+        "card_image": "./cards/arese.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/318/arese"
+    },
+    {
+        "name": "VALDICHIANA",
+        "slug": "valdichiana",
+        "city": "AREZZO",
+        "region": "Toscana",
+        "lat": 43.48358,
+        "lng": 11.85174,
+        "card_image": "./cards/valdichiana.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/471/valdichiana"
+    },
+    {
+        "name": "ELNOS",
+        "slug": "elnos",
+        "city": "BRESCIA",
+        "region": "Lombardia",
+        "lat": 45.53577,
+        "lng": 10.22183,
+        "card_image": "./cards/elnos.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/837/elnos"
+    },
+    {
+        "name": "FRANCIACORTA",
+        "slug": "franciacorta",
+        "city": "BRESCIA",
+        "region": "Lombardia",
+        "lat": 45.54336,
+        "lng": 10.21028,
+        "card_image": "./cards/franciacorta.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/838/franciacorta"
+    },
+    {
+        "name": "ZANARDELLI",
+        "slug": "zanardelli",
+        "city": "BRESCIA",
+        "region": "Lombardia",
+        "lat": 45.51589,
+        "lng": 10.19958,
+        "card_image": "./cards/zanardelli.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_ZANARDELLI"
+    },
+    {
+        "name": "BUSNAGO",
+        "slug": "busnago",
+        "city": "BUSNAGO",
+        "region": "Lombardia",
+        "lat": 45.46663,
+        "lng": 9.20456,
+        "card_image": "./cards/busnago.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/454/busnago"
+    },
+    {
+        "name": "CAROSELLO",
+        "slug": "carosello",
+        "city": "CARUGATE",
+        "region": "Lombardia",
+        "lat": 45.44744,
+        "lng": 9.17375,
+        "card_image": "./cards/carosello.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/836/carosello"
+    },
+    {
+        "name": "MARCIANISE",
+        "slug": "marcianise",
+        "city": "CASERTA",
+        "region": "Campania",
+        "lat": 41.08154,
+        "lng": 14.3218,
+        "card_image": "./cards/marcianise.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_MARCIANISE"
+    },
+    {
+        "name": "CENTRO SICILIA",
+        "slug": "centro-sicilia",
+        "city": "CATANIA",
+        "region": "Sicilia",
+        "lat": 37.51774,
+        "lng": 15.0845,
+        "card_image": "./cards/centro-sicilia.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_CENTROSICILIA"
+    },
+    {
+        "name": "VERGA",
+        "slug": "verga",
+        "city": "CATANIA",
+        "region": "Sicilia",
+        "lat": 37.49499,
+        "lng": 15.08937,
+        "card_image": "./cards/verga.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/854/verga"
+    },
+    {
+        "name": "OTTAVIANI",
+        "slug": "ottaviani",
+        "city": "FIRENZE",
+        "region": "Toscana",
+        "lat": 43.76415,
+        "lng": 11.27597,
+        "card_image": "./cards/ottaviani.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/441/ottaviani"
+    },
+    {
+        "name": "PIAZZA DANTE",
+        "slug": "piazza-dante",
+        "city": "GENOVA",
+        "region": "Liguria",
+        "lat": 44.39699,
+        "lng": 8.93771,
+        "card_image": "./cards/piazza-dante.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/521/piazza-dante-san-vincenzo"
+    },
+    {
+        "name": "SAN VINCENZO",
+        "slug": "san-vincenzo",
+        "city": "GENOVA",
+        "region": "Liguria",
+        "lat": 44.41938,
+        "lng": 8.92721,
+        "card_image": "./cards/san-vincenzo.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/521/piazza-dante-san-vincenzo"
+    },
+    {
+        "name": "NAVE DE VERO",
+        "slug": "nave-de-vero",
+        "city": "MESTRE",
+        "region": "Veneto",
+        "lat": 45.48492,
+        "lng": 12.22951,
+        "card_image": "./cards/nave-de-vero.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/785/nave-de-vero"
+    },
+    {
+        "name": "BICOCCA",
+        "slug": "bicocca",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.46059,
+        "lng": 9.19496,
+        "card_image": "./cards/bicocca.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/259/bicocca"
+    },
+    {
+        "name": "BOCCONI",
+        "slug": "bocconi",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.43806,
+        "lng": 9.18953,
+        "card_image": "./cards/bocconi.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_BOCCONI"
+    },
+    {
+        "name": "BRERA",
+        "slug": "brera",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.49034,
+        "lng": 9.20051,
+        "card_image": "./cards/brera.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/734/brera"
+    },
+    {
+        "name": "CADORNA",
+        "slug": "cadorna",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.48758,
+        "lng": 9.17776,
+        "card_image": "./cards/cadorna.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/733/cadorna"
+    },
+    {
+        "name": "CASCINA MERLATA",
+        "slug": "cascina-merlata",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.45079,
+        "lng": 9.16908,
+        "card_image": "./cards/cascina-merlata.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/292/cascina-merlata"
+    },
+    {
+        "name": "CITYLIFE",
+        "slug": "citylife",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.44009,
+        "lng": 9.17717,
+        "card_image": "./cards/city-life.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/315/city-life"
+    },
+    {
+        "name": "CITYLIFE KIOSK",
+        "slug": "citylife-kiosk",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.45588,
+        "lng": 9.19449,
+        "card_image": "./cards/citylife-kiosk.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/315/city-life"
+    },
+    {
+        "name": "FIAMMA",
+        "slug": "fiamma",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.48965,
+        "lng": 9.16855,
+        "card_image": "./cards/fiamma.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/773/fiamma"
+    },
+    {
+        "name": "IMBONATI",
+        "slug": "imbonati",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.46518,
+        "lng": 9.19076,
+        "card_image": "./cards/imbonati.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/771/imbonati"
+    },
+    {
+        "name": "ISOLA",
+        "slug": "isola",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.4882,
+        "lng": 9.19444,
+        "card_image": "./cards/isola.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/260/isola"
+    },
+    {
+        "name": "MERAVIGLI",
+        "slug": "meravigli",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.49019,
+        "lng": 9.16765,
+        "card_image": "./cards/meravigli.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/772/meravigli"
+    },
+    {
+        "name": "NAVIGLI",
+        "slug": "navigli",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.49267,
+        "lng": 9.21311,
+        "card_image": "./cards/navigli.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/280/navigli"
+    },
+    {
+        "name": "NIRONE",
+        "slug": "nirone",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.4822,
+        "lng": 9.20261,
+        "card_image": "./cards/nirone.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/520/nirone"
+    },
+    {
+        "name": "RINASCENTE",
+        "slug": "rinascente",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.47883,
+        "lng": 9.19595,
+        "card_image": "./cards/rinascente.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/472/rinascente"
+    },
+    {
+        "name": "SEMPIONE",
+        "slug": "sempione",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.47832,
+        "lng": 9.18867,
+        "card_image": "./cards/sempione.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/442/sempione"
+    },
+    {
+        "name": "SPALLANZANI",
+        "slug": "spallanzani",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.45078,
+        "lng": 9.21881,
+        "card_image": "./cards/spallanzani.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/474/spallanzani"
+    },
+    {
+        "name": "SYMBIOSIS",
+        "slug": "symbiosis",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.46941,
+        "lng": 9.20173,
+        "card_image": "./cards/symbiosis.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/775/symbiosis"
+    },
+    {
+        "name": "THE SIGN",
+        "slug": "the-sign",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.49244,
+        "lng": 9.17449,
+        "card_image": "./cards/the-sign.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/522/the-sign"
+    },
+    {
+        "name": "TRIBUNALE",
+        "slug": "tribunale",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.48771,
+        "lng": 9.20976,
+        "card_image": "./cards/tribunale.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/735/tribunale"
+    },
+    {
+        "name": "TURATI",
+        "slug": "turati",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.43762,
+        "lng": 9.16529,
+        "card_image": "./cards/turati.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/316/turati"
+    },
+    {
+        "name": "WAGNER",
+        "slug": "wagner",
+        "city": "MILANO",
+        "region": "Lombardia",
+        "lat": 45.4501,
+        "lng": 9.17836,
+        "card_image": "./cards/wagner.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/470/wagner"
+    },
+    {
+        "name": "MONZA",
+        "slug": "monza",
+        "city": "MONZA",
+        "region": "Lombardia",
+        "lat": 45.46372,
+        "lng": 9.18518,
+        "card_image": "./cards/monza.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/736/monza"
+    },
+    {
+        "name": "CHIAIA",
+        "slug": "chiaia",
+        "city": "NAPOLI",
+        "region": "Campania",
+        "lat": 40.83784,
+        "lng": 14.25698,
+        "card_image": "./cards/chiaia.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/313/chiaia"
+    },
+    {
+        "name": "NOVARA",
+        "slug": "novara",
+        "city": "NOVARA",
+        "region": "Piemonte",
+        "lat": 45.45632,
+        "lng": 9.20527,
+        "card_image": "./cards/novara.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_NOVARA"
+    },
+    {
+        "name": "FORUM",
+        "slug": "forum",
+        "city": "PALERMO",
+        "region": "Sicilia",
+        "lat": 38.11344,
+        "lng": 13.37936,
+        "card_image": "./cards/forum.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/833/forum"
+    },
+    {
+        "name": "GALLO",
+        "slug": "gallo",
+        "city": "PALERMO",
+        "region": "Sicilia",
+        "lat": 38.0911,
+        "lng": 13.33844,
+        "card_image": "./cards/gallo.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/517/gallo"
+    },
+    {
+        "name": "LA GALLERIA",
+        "slug": "la-galleria",
+        "city": "PARMA",
+        "region": "Emilia Romagna",
+        "lat": 44.81999,
+        "lng": 10.34464,
+        "card_image": "./cards/la-galleria.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/737/la-galleria"
+    },
+    {
+        "name": "PAVIA",
+        "slug": "pavia",
+        "city": "PAVIA",
+        "region": "Lombardia",
+        "lat": 45.47934,
+        "lng": 9.16871,
+        "card_image": "./cards/pavia.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/314/pavia"
+    },
+    {
+        "name": "MAXIMALL POMPEI",
+        "slug": "maximall-pompei",
+        "city": "POMPEI",
+        "region": "Campania",
+        "lat": 40.75565,
+        "lng": 14.51413,
+        "card_image": "./cards/maximall-pompei.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/518/maximall-pompei"
+    },
+    {
+        "name": "AURA",
+        "slug": "aura",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.91219,
+        "lng": 12.49071,
+        "card_image": "./cards/aura.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/440/aura"
+    },
+    {
+        "name": "BEETHOVEN",
+        "slug": "beethoven",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.88013,
+        "lng": 12.47211,
+        "card_image": "./cards/beethoven.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/799/beethoven"
+    },
+    {
+        "name": "CENTRO LEONARDO",
+        "slug": "centro-leonardo",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.91273,
+        "lng": 12.51326,
+        "card_image": "./cards/centro-leonardo.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/800/centro-leonardo"
+    },
+    {
+        "name": "COLONNA",
+        "slug": "colonna",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.92518,
+        "lng": 12.51648,
+        "card_image": "./cards/colonna.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/770/colonna"
+    },
+    {
+        "name": "EUROMA2",
+        "slug": "euroma2",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.88449,
+        "lng": 12.509,
+        "card_image": "./cards/euroma2.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/317/euroma2"
+    },
+    {
+        "name": "GAMBERO",
+        "slug": "gambero",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.89961,
+        "lng": 12.52208,
+        "card_image": "./cards/gambero.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/774/gambero"
+    },
+    {
+        "name": "MAXIMO",
+        "slug": "maximo",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.92674,
+        "lng": 12.52539,
+        "card_image": "./cards/maximo.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/443/maximo"
+    },
+    {
+        "name": "PO",
+        "slug": "po",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.87496,
+        "lng": 12.47179,
+        "card_image": "./cards/po.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/281/po"
+    },
+    {
+        "name": "PORTA DI ROMA",
+        "slug": "porta-di-roma",
+        "city": "ROMA",
+        "region": "Lazio",
+        "lat": 41.89711,
+        "lng": 12.48695,
+        "card_image": "./cards/porta-di-roma.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/469/porta-di-roma"
+    },
+    {
+        "name": "PONTECAGNANO",
+        "slug": "pontecagnano",
+        "city": "SALERNO",
+        "region": "Campania",
+        "lat": 40.65261,
+        "lng": 14.78362,
+        "card_image": "./cards/pontecagnano.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/519/pontecagnano"
+    },
+    {
+        "name": "ALDO MORO",
+        "slug": "aldo-moro",
+        "city": "TORINO",
+        "region": "Piemonte",
+        "lat": 45.07954,
+        "lng": 7.70771,
+        "card_image": "./cards/aldo-moro.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/473/aldo-moro"
+    },
+    {
+        "name": "CARLINA",
+        "slug": "carlina",
+        "city": "TORINO",
+        "region": "Piemonte",
+        "lat": 45.06224,
+        "lng": 7.70702,
+        "card_image": "./cards/carlina.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/783/carlina"
+    },
+    {
+        "name": "LE GRU",
+        "slug": "le-gru",
+        "city": "TORINO",
+        "region": "Piemonte",
+        "lat": 45.07139,
+        "lng": 7.6667,
+        "card_image": "./cards/le-gru.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_LEGRU"
+    },
+    {
+        "name": "LINGOTTO",
+        "slug": "lingotto",
+        "city": "TORINO",
+        "region": "Piemonte",
+        "lat": 45.0448,
+        "lng": 7.67685,
+        "card_image": "./cards/lingotto.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/835/lingotto"
+    },
+    {
+        "name": "TORINO PORTA NUOVA",
+        "slug": "torino-porta-nuova",
+        "city": "TORINO",
+        "region": "Piemonte",
+        "lat": 45.09147,
+        "lng": 7.67365,
+        "card_image": "./cards/torino-porta-nuova.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/834/torino-porta-nuova"
+    },
+    {
+        "name": "VARESE",
+        "slug": "varese",
+        "city": "VARESE",
+        "region": "Lombardia",
+        "lat": 45.48721,
+        "lng": 9.20726,
+        "card_image": "./cards/varese.png",
+        "docebo_url": "https://phacademy.poke-house.com/learn/courses/786/varese"
+    },
+    {
+        "name": "VERONA",
+        "slug": "verona",
+        "city": "VERONA",
+        "region": "Veneto",
+        "lat": 45.43407,
+        "lng": 10.99006,
+        "card_image": "./cards/verona.png",
+        "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_VERONA"
+    }
+]

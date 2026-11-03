@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poke House - Interactive Store Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        
+        :root {
+            --ph-bg: #FDF6E9;
+            --ph-blue-dark: #1E3A5F;
+            --ph-blue: #00A3B5;
+            --ph-pink: #FF85A2;
+            --ph-text: #1E3A5F;
+            --ph-white: #FFFFFF;
+        }
+
+        body, html {
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+            height: 100%; background-color: var(--ph-bg); color: var(--ph-text); overflow: hidden;
+        }
+
+        .container { display: flex; height: 100vh; flex-direction: row; position: relative; }
+
+        .map-wrapper {
+            flex: 6; height: 100%; position: relative; background-color: #B5D0D0; border-right: 4px solid var(--ph-text);
+        }
+        #map { width: 100%; height: 100%; z-index: 1; }
+        .leaflet-layer { filter: sepia(0.2) saturate(1.2); }
+
+        .sidebar {
+            flex: 4; padding: 40px 30px; background-color: var(--ph-bg); overflow-y: auto;
+            box-sizing: border-box; display: flex; flex-direction: column; z-index: 2; position: relative;
+        }
+        .sidebar::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="%23E5C79E" opacity="0.4"/></svg>');
+            pointer-events: none; z-index: -1;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 32px; font-weight: 800; margin-top: 0; margin-bottom: 5px; text-transform: uppercase; color: var(--ph-text); letter-spacing: -0.5px; }
+        .header h2 { font-size: 16px; font-weight: 600; color: var(--ph-pink); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        .filters {
+            display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;
+        }
+
+        .filters input, .filters select {
+            width: 100%; padding: 12px 15px; border-radius: 12px; border: 2px solid var(--ph-text);
+            font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--ph-text);
+            background-color: var(--ph-white); outline: none; box-shadow: 4px 4px 0px rgba(30,58,95,0.1); box-sizing: border-box; transition: all 0.2s;
+        }
+        .filters input:focus, .filters select:hover {
+            box-shadow: 2px 2px 0px rgba(30,58,95,0.2); transform: translate(2px, 2px);
+        }
+        .filters input::placeholder { color: #A0B2C4; font-weight: 500; }
+
+        .store-card {
+            display: none; animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;
+            text-align: center;
+        }
+        .store-card.active { display: flex; flex-direction: column; align-items: center; }
+
+        .card-graphic {
+            width: 100%; max-width: 400px; border-radius: 20px; box-shadow: 0 10px 30px rgba(30,58,95,0.15);
+            margin-bottom: 20px; border: 2px solid rgba(30,58,95,0.05); object-fit: contain; background-color: white;
+        }
+
+        .btn-video {
+            display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; max-width: 400px;
+            background-color: var(--ph-text); color: var(--ph-white); text-decoration: none; padding: 16px;
+            border-radius: 14px; font-weight: 700; font-size: 16px; transition: all 0.2s; box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(30,58,95,0.2);
+        }
+        .btn-video:hover { background-color: var(--ph-pink); transform: translateY(-2px); }
+
+        .placeholder-card {
+            text-align: center; padding: 40px 30px; color: var(--ph-text); opacity: 0.6; font-weight: 600;
+            font-size: 18px; line-height: 1.5; border: 3px dashed rgba(30,58,95,0.2); border-radius: 20px;
+        }
+
+        .custom-ph-marker {
+            width: 32px; height: 42px; background-size: contain; background-repeat: no-repeat;
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.163 0 0 7.163 0 16C0 26.5 16 42 16 42C16 42 32 26.5 32 16C32 7.163 24.837 0 16 0Z" fill="%23FF85A2"/><circle cx="16" cy="15" r="7" fill="white"/></svg>');
+            filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.3)); transition: transform 0.2s;
+        }
+        .custom-ph-marker:hover { transform: scale(1.15) translateY(-5px); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; overflow-y: auto; }
+            .map-wrapper { flex: none; height: 50vh; border-right: none; border-bottom: 4px solid var(--ph-text); }
+            .sidebar { height: auto; flex: none; }
+            body, html { overflow: auto; }
+        }
+        
+        .leaflet-popup-content-wrapper { border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--ph-text); }
+        .leaflet-popup-content b { color: var(--ph-pink); text-transform: uppercase; font-size: 14px; }
+        .leaflet-popup-content .popup-address { font-size: 12px; margin-top: 5px; opacity: 0.8; line-height: 1.3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="map-wrapper"><div id="map"></div></div>
+    
+    <div class="sidebar">
+        <div class="header">
+            <h2>Poke House Academy</h2>
+            <h1>Our Stores</h1>
+        </div>
+        
+        <div class="filters">
+            <input type="text" id="searchBar" placeholder="🔍 Cerca uno store, città o via..." autocomplete="off">
+            <select id="storeSelect">
+                <option value="all">📍 Seleziona uno store...</option>
+            </select>
+        </div>
+
+        <div id="placeholderCard" class="placeholder-card">
+            🏄‍♀️ Usa la ricerca, il menu a tendina oppure passa il cursore o clicca su un pin sulla mappa per scoprire lo store e guardare il video "All About Us".
+        </div>
+
+        <div id="storeCard" class="store-card">
+            <img id="cardGraphicFull" class="card-graphic" src="" alt="Scheda Tecnica Store" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'600\' viewBox=\'0 0 400 600\'><rect fill=\'%23FDF6E9\' width=\'400\' height=\'600\'/><text fill=\'%231E3A5F\' font-family=\'sans-serif\' font-size=\'18\' x=\'50%\' y=\'50%\' text-anchor=\'middle\'>Immagine non trovata.\nCarica la foto in formato PNG\nnella cartella cards.</text></svg>'">
+            
+            <a href="#" id="cardLink" class="btn-video" target="_blank">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
+                </svg>
+                WATCH ALL ABOUT US
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const stores = [
+        { "name": "ARESE", "slug": "arese", "city": "ARESE", "region": "Lombardia", "lat": 45.46857, "lng": 9.19101, "card_image": "./cards/arese.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/318/arese", "indirizzo": "Via Giuseppe Eugenio Luraghi, 11, 20044 Arese MI" },
+        { "name": "VALDICHIANA", "slug": "valdichiana", "city": "AREZZO", "region": "Toscana", "lat": 43.48358, "lng": 11.85174, "card_image": "./cards/valdichiana.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/471/valdichiana", "indirizzo": "Via Enzo Ferrari, 5, 52045 Foiano della Chiana AR" },
+        { "name": "ELNOS", "slug": "elnos", "city": "BRESCIA", "region": "Lombardia", "lat": 45.53577, "lng": 10.22183, "card_image": "./cards/elnos.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/837/elnos", "indirizzo": "Via Luigi Einaudi, 25030 Roncadelle BS, Piano 1, presso CC Elnos Shopping" },
+        { "name": "FRANCIACORTA", "slug": "franciacorta", "city": "BRESCIA", "region": "Lombardia", "lat": 45.54336, "lng": 10.21028, "card_image": "./cards/franciacorta.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/838/franciacorta", "indirizzo": "Piazza Cascina Moie, 1/2, 25050 Rodengo Saiano BS, Presso Franciacorta Village" },
+        { "name": "ZANARDELLI", "slug": "zanardelli", "city": "BRESCIA", "region": "Lombardia", "lat": 45.51589, "lng": 10.19958, "card_image": "./cards/zanardelli.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_ZANARDELLI", "indirizzo": "Corso Giuseppe Zanardelli, 26, 25121 Brescia BS" },
+        { "name": "BUSNAGO", "slug": "busnago", "city": "BUSNAGO", "region": "Lombardia", "lat": 45.46663, "lng": 9.20456, "card_image": "./cards/busnago.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/454/busnago", "indirizzo": "Via Italia, 197, 20874 Busnago MB, Presso CC Globo" },
+        { "name": "CAROSELLO", "slug": "carosello", "city": "CARUGATE", "region": "Lombardia", "lat": 45.44744, "lng": 9.17375, "card_image": "./cards/carosello.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/836/carosello", "indirizzo": "SP208, km 2, 20061 Carugate MI, Presso CC Carosello" },
+        { "name": "MARCIANISE", "slug": "marcianise", "city": "CASERTA", "region": "Campania", "lat": 41.08154, "lng": 14.3218, "card_image": "./cards/marcianise.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_MARCIANISE", "indirizzo": "Località Aurno, 87, 81025 Marcianise CE, presso CC Campania" },
+        { "name": "CENTRO SICILIA", "slug": "centro-sicilia", "city": "CATANIA", "region": "Sicilia", "lat": 37.51774, "lng": 15.0845, "card_image": "./cards/centro-sicilia.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_CENTROSICILIA", "indirizzo": "SP54, 95045 Misterbianco CT, Presso CC Centro Sicilia" },
+        { "name": "VERGA", "slug": "verga", "city": "CATANIA", "region": "Sicilia", "lat": 37.49499, "lng": 15.08937, "card_image": "./cards/verga.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/854/verga", "indirizzo": "Piazza Giovanni Verga, 21 95129 Catania CT" },
+        { "name": "OTTAVIANI", "slug": "ottaviani", "city": "FIRENZE", "region": "Toscana", "lat": 43.76415, "lng": 11.27597, "card_image": "./cards/ottaviani.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/441/ottaviani", "indirizzo": "Piazza degli Ottaviani, 11, 50123 Firenze FI" },
+        { "name": "PIAZZA DANTE", "slug": "piazza-dante", "city": "GENOVA", "region": "Liguria", "lat": 44.39699, "lng": 8.93771, "card_image": "./cards/piazza-dante.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/521/piazza-dante-san-vincenzo", "indirizzo": "Piazza Dante, 10/12r, 16121 Genova GE" },
+        { "name": "SAN VINCENZO", "slug": "san-vincenzo", "city": "GENOVA", "region": "Liguria", "lat": 44.41938, "lng": 8.92721, "card_image": "./cards/san-vincenzo.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/521/piazza-dante-san-vincenzo", "indirizzo": "Via S. Vincenzo, 141r/143r, 16121 Genova GE" },
+        { "name": "NAVE DE VERO", "slug": "nave-de-vero", "city": "MESTRE", "region": "Veneto", "lat": 45.48492, "lng": 12.22951, "card_image": "./cards/nave-de-vero.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/785/nave-de-vero", "indirizzo": "Via Pietro Arduino, 20, 30175 Venezia VE, Presso CC Nave de Vero" },
+        { "name": "BICOCCA", "slug": "bicocca", "city": "MILANO", "region": "Lombardia", "lat": 45.46059, "lng": 9.19496, "card_image": "./cards/bicocca.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/259/bicocca", "indirizzo": "Viale Sarca, 232, 20126 Milano MI, presso Bicocca Village" },
+        { "name": "BOCCONI", "slug": "bocconi", "city": "MILANO", "region": "Lombardia", "lat": 45.43806, "lng": 9.18953, "card_image": "./cards/bocconi.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_BOCCONI", "indirizzo": "Viale Giovanni Sebastiano Bach, 20124 Milano MI" },
+        { "name": "BRERA", "slug": "brera", "city": "MILANO", "region": "Lombardia", "lat": 45.49034, "lng": 9.20051, "card_image": "./cards/brera.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/734/brera", "indirizzo": "Via Broletto, 41, 20121 Milano MI" },
+        { "name": "CADORNA", "slug": "cadorna", "city": "MILANO", "region": "Lombardia", "lat": 45.48758, "lng": 9.17776, "card_image": "./cards/cadorna.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/733/cadorna", "indirizzo": "Piazza Virgilio, 4, 20123 Milano MI" },
+        { "name": "CASCINA MERLATA", "slug": "cascina-merlata", "city": "MILANO", "region": "Lombardia", "lat": 45.45079, "lng": 9.16908, "card_image": "./cards/cascina-merlata.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/292/cascina-merlata", "indirizzo": "Via Triboniano, 256, 20156 Milano MI, presso Merlata Bloom" },
+        { "name": "CITYLIFE", "slug": "citylife", "city": "MILANO", "region": "Lombardia", "lat": 45.44009, "lng": 9.17717, "card_image": "./cards/city-life.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/315/city-life", "indirizzo": "Piazza Tre Torri, 1, 20145 Milano MI, Piano G, CityLife Shopping District" },
+        { "name": "CITYLIFE KIOSK", "slug": "citylife-kiosk", "city": "MILANO", "region": "Lombardia", "lat": 45.45588, "lng": 9.19449, "card_image": "./cards/citylife-kiosk.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/315/city-life", "indirizzo": "Piazza Tre Torri, 1, 20145 Milano MI, Piano G, CityLife Shopping District" },
+        { "name": "FIAMMA", "slug": "fiamma", "city": "MILANO", "region": "Lombardia", "lat": 45.48965, "lng": 9.16855, "card_image": "./cards/fiamma.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/773/fiamma", "indirizzo": "Via Galvano Fiamma, 5, 20129 Milano MI" },
+        { "name": "IMBONATI", "slug": "imbonati", "city": "MILANO", "region": "Lombardia", "lat": 45.46518, "lng": 9.19076, "card_image": "./cards/imbonati.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/771/imbonati", "indirizzo": "Via Carlo Imbonati, 24, 20159 Milano MI" },
+        { "name": "ISOLA", "slug": "isola", "city": "MILANO", "region": "Lombardia", "lat": 45.4882, "lng": 9.19444, "card_image": "./cards/isola.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/260/isola", "indirizzo": "Via Gaetano de Castillia, 24, 20124 Milano MI" },
+        { "name": "MERAVIGLI", "slug": "meravigli", "city": "MILANO", "region": "Lombardia", "lat": 45.49019, "lng": 9.16765, "card_image": "./cards/meravigli.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/772/meravigli", "indirizzo": "Via Meravigli, 2, 20121 Milano MI" },
+        { "name": "NAVIGLI", "slug": "navigli", "city": "MILANO", "region": "Lombardia", "lat": 45.49267, "lng": 9.21311, "card_image": "./cards/navigli.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/280/navigli", "indirizzo": "Via Pasquale Paoli, 3, 20143 Milano MI" },
+        { "name": "NIRONE", "slug": "nirone", "city": "MILANO", "region": "Lombardia", "lat": 45.4822, "lng": 9.20261, "card_image": "./cards/nirone.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/520/nirone", "indirizzo": "Via Nirone, 5, 20123 Milano MI" },
+        { "name": "RINASCENTE", "slug": "rinascente", "city": "MILANO", "region": "Lombardia", "lat": 45.47883, "lng": 9.19595, "card_image": "./cards/rinascente.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/472/rinascente", "indirizzo": "Via Santa Radegonda, 3, 20121 Milano MI, Piano 0, Rinascente Milano" },
+        { "name": "SEMPIONE", "slug": "sempione", "city": "MILANO", "region": "Lombardia", "lat": 45.47832, "lng": 9.18867, "card_image": "./cards/sempione.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/442/sempione", "indirizzo": "Viale Eugenio Beauharnais, 20121 Milano MI" },
+        { "name": "SPALLANZANI", "slug": "spallanzani", "city": "MILANO", "region": "Lombardia", "lat": 45.45078, "lng": 9.21881, "card_image": "./cards/spallanzani.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/474/spallanzani", "indirizzo": "Via Lazzaro Spallanzani, 16, 20129 Milano MI" },
+        { "name": "SYMBIOSIS", "slug": "symbiosis", "city": "MILANO", "region": "Lombardia", "lat": 45.46941, "lng": 9.20173, "card_image": "./cards/symbiosis.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/775/symbiosis", "indirizzo": "Via Orobia, 16, 20139 Milano MI" },
+        { "name": "THE SIGN", "slug": "the-sign", "city": "MILANO", "region": "Lombardia", "lat": 45.49244, "lng": 9.17449, "card_image": "./cards/the-sign.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/522/the-sign", "indirizzo": "Via Ernesto Calindri, 2, 20143 Milano MI" },
+        { "name": "TRIBUNALE", "slug": "tribunale", "city": "MILANO", "region": "Lombardia", "lat": 45.48771, "lng": 9.20976, "card_image": "./cards/tribunale.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/735/tribunale", "indirizzo": "Via Carlo Freguglia, 2, 20122 Milano MI" },
+        { "name": "TURATI", "slug": "turati", "city": "MILANO", "region": "Lombardia", "lat": 45.43762, "lng": 9.16529, "card_image": "./cards/turati.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/316/turati", "indirizzo": "V. Filippo Turati, 3, 20121 Milano MI" },
+        { "name": "WAGNER", "slug": "wagner", "city": "MILANO", "region": "Lombardia", "lat": 45.4501, "lng": 9.17836, "card_image": "./cards/wagner.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/470/wagner", "indirizzo": "Via Cuneo, 5, 20149 Milano MI" },
+        { "name": "MONZA", "slug": "monza", "city": "MONZA", "region": "Lombardia", "lat": 45.46372, "lng": 9.18518, "card_image": "./cards/monza.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/736/monza", "indirizzo": "Via Carlo Alberto, 14, 20900 Monza MB" },
+        { "name": "CHIAIA", "slug": "chiaia", "city": "NAPOLI", "region": "Campania", "lat": 40.83784, "lng": 14.25698, "card_image": "./cards/chiaia.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/313/chiaia", "indirizzo": "Via Chiaia, 186/187, 80132 Napoli NA" },
+        { "name": "NOVARA", "slug": "novara", "city": "NOVARA", "region": "Piemonte", "lat": 45.45632, "lng": 9.20527, "card_image": "./cards/novara.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_NOVARA", "indirizzo": "Corso Giuseppe Mazzini, 11b, 28100 Novara NO" },
+        { "name": "FORUM", "slug": "forum", "city": "PALERMO", "region": "Sicilia", "lat": 38.11344, "lng": 13.37936, "card_image": "./cards/forum.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/833/forum", "indirizzo": "Via Filippo Pecoraino, 90124 Palermo PA Presso CC Palermo Forum" },
+        { "name": "GALLO", "slug": "gallo", "city": "PALERMO", "region": "Sicilia", "lat": 38.0911, "lng": 13.33844, "card_image": "./cards/gallo.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/517/gallo", "indirizzo": "Via Nicolò Gallo, 1, 90139 Palermo PA" },
+        { "name": "LA GALLERIA", "slug": "la-galleria", "city": "PARMA", "region": "Emilia Romagna", "lat": 44.81999, "lng": 10.34464, "card_image": "./cards/la-galleria.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/737/la-galleria", "indirizzo": "Via Emilia Est, 7B, 43121 Parma PR, Presso CC La Galleria" },
+        { "name": "PAVIA", "slug": "pavia", "city": "PAVIA", "region": "Lombardia", "lat": 45.47934, "lng": 9.16871, "card_image": "./cards/pavia.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/314/pavia", "indirizzo": "Piazza della Vittoria, 11, 27100 Pavia PV" },
+        { "name": "MAXIMALL POMPEI", "slug": "maximall-pompei", "city": "POMPEI", "region": "Campania", "lat": 40.75565, "lng": 14.51413, "card_image": "./cards/maximall-pompei.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/518/maximall-pompei", "indirizzo": "Via Plinio, 56, 80058 Torre Annunziata NA, presso MaxiMall Pompei" },
+        { "name": "AURA", "slug": "aura", "city": "ROMA", "region": "Lazio", "lat": 41.91219, "lng": 12.49071, "card_image": "./cards/aura.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/440/aura", "indirizzo": "Viale di Valle Aurelia, 30, 00167 Roma RM" },
+        { "name": "BEETHOVEN", "slug": "beethoven", "city": "ROMA", "region": "Lazio", "lat": 41.88013, "lng": 12.47211, "card_image": "./cards/beethoven.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/799/beethoven", "indirizzo": "Viale Beethoven, 80/82, 00144 Roma RM" },
+        { "name": "CENTRO LEONARDO", "slug": "centro-leonardo", "city": "ROMA", "region": "Lazio", "lat": 41.91273, "lng": 12.51326, "card_image": "./cards/centro-leonardo.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/800/centro-leonardo", "indirizzo": "Viale Donato Bramante, 31/65, 00054 Roma RM" },
+        { "name": "COLONNA", "slug": "colonna", "city": "ROMA", "region": "Lazio", "lat": 41.92518, "lng": 12.51648, "card_image": "./cards/colonna.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/770/colonna", "indirizzo": "Via Marcantonio Colonna, 22, 00192 Roma RM" },
+        { "name": "EUROMA2", "slug": "euroma2", "city": "ROMA", "region": "Lazio", "lat": 41.88449, "lng": 12.509, "card_image": "./cards/euroma2.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/317/euroma2", "indirizzo": "Viale dell'Oceano Pacifico, 83, 00144 Roma RM, presso CC Euroma2" },
+        { "name": "GAMBERO", "slug": "gambero", "city": "ROMA", "region": "Lazio", "lat": 41.89961, "lng": 12.52208, "card_image": "./cards/gambero.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/774/gambero", "indirizzo": "Via del Gambero, 36, 00187 Roma RM" },
+        { "name": "MAXIMO", "slug": "maximo", "city": "ROMA", "region": "Lazio", "lat": 41.92674, "lng": 12.52539, "card_image": "./cards/maximo.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/443/maximo", "indirizzo": "Via Laurentina, 00143 Roma RM, presso CC Maximo Shopping Center" },
+        { "name": "PO", "slug": "po", "city": "ROMA", "region": "Lazio", "lat": 41.87496, "lng": 12.47179, "card_image": "./cards/po.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/281/po", "indirizzo": "V. Po, 160, 00198 Roma RM" },
+        { "name": "PORTA DI ROMA", "slug": "porta-di-roma", "city": "ROMA", "region": "Lazio", "lat": 41.89711, "lng": 12.48695, "card_image": "./cards/porta-di-roma.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/469/porta-di-roma", "indirizzo": "Via Alberto Lionello, 201, 00139 Roma RM" },
+        { "name": "PONTECAGNANO", "slug": "pontecagnano", "city": "SALERNO", "region": "Campania", "lat": 40.65261, "lng": 14.78362, "card_image": "./cards/pontecagnano.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/519/pontecagnano", "indirizzo": "Via Antonio Pacinotti, 84098 Sant'Antonio SA, presso CC Maximall Pontecagnano" },
+        { "name": "ALDO MORO", "slug": "aldo-moro", "city": "TORINO", "region": "Piemonte", "lat": 45.07954, "lng": 7.70771, "card_image": "./cards/aldo-moro.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/473/aldo-moro", "indirizzo": "Piazzale Aldo Moro, Via Sant'Ottavio, 12/B, 10124 Torino TO" },
+        { "name": "CARLINA", "slug": "carlina", "city": "TORINO", "region": "Piemonte", "lat": 45.06224, "lng": 7.70702, "card_image": "./cards/carlina.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/783/carlina", "indirizzo": "Via Santa Croce, 2, 10123 Torino TO" },
+        { "name": "LE GRU", "slug": "le-gru", "city": "TORINO", "region": "Piemonte", "lat": 45.07139, "lng": 7.6667, "card_image": "./cards/le-gru.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_LEGRU", "indirizzo": "V. Crea, 10, 10095 Grugliasco TO, presso CC Shopville Le Gru" },
+        { "name": "LINGOTTO", "slug": "lingotto", "city": "TORINO", "region": "Piemonte", "lat": 45.0448, "lng": 7.67685, "card_image": "./cards/lingotto.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/835/lingotto", "indirizzo": "Via Nizza, 230, 10126 Torino TO" },
+        { "name": "TORINO PORTA NUOVA", "slug": "torino-porta-nuova", "city": "TORINO", "region": "Piemonte", "lat": 45.09147, "lng": 7.67365, "card_image": "./cards/torino-porta-nuova.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/834/torino-porta-nuova", "indirizzo": "N/D" },
+        { "name": "VARESE", "slug": "varese", "city": "VARESE", "region": "Lombardia", "lat": 45.48721, "lng": 9.20726, "card_image": "./cards/varese.png", "docebo_url": "https://phacademy.poke-house.com/learn/courses/786/varese", "indirizzo": "Via Carlo Giuseppe Veratti, 4, 21100 Varese VA" },
+        { "name": "VERONA", "slug": "verona", "city": "VERONA", "region": "Veneto", "lat": 45.43407, "lng": 10.99006, "card_image": "./cards/verona.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_VERONA", "indirizzo": "Largo Guido Gonella, 1, 37121 Verona VR" }
+    ];
+
+    // Coordinate strettissime: dal punto più a Sud/Ovest a quello più a Nord/Est
+    const italyBounds = [[36.0, 6.5], [47.5, 18.5]];
+
+    const map = L.map('map', {
+        zoomControl: true, 
+        scrollWheelZoom: true, 
+        minZoom: 6.5, // Limite zoom indietro
+        maxZoom: 15,
+        maxBounds: italyBounds, 
+        maxBoundsViscosity: 1.0 // Blocca il trascinamento fuori dall'Italia
+    }).setView([41.8719, 12.5674], 6.5);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri', maxZoom: 16
+    }).addTo(map);
+
+    fetch('https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson')
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data, {
+                style: function(feature) {
+                    const name = feature.properties.reg_name || "";
+                    let regionColor = '#FFE1E8'; 
+                    if(name.includes('Lombardia') || name.includes('Toscana') || name.includes('Sicilia')) regionColor = '#F4A261'; 
+                    else if(name.includes('Piemonte') || name.includes('Campania') || name.includes('Lazio')) regionColor = '#FF85A2'; 
+                    else if(name.includes('Veneto') || name.includes('Puglia')) regionColor = '#2A9D8F'; 
+                    else if(name.includes('Emilia')) regionColor = '#E9C46A'; 
+                    else if(name.includes('Sardegna')) regionColor = '#FDF6E9'; 
+                    else if(name.includes('Calabria') || name.includes('Liguria')) regionColor = '#8AB17D'; 
+                    else if(name.includes('Umbria') || name.includes('Marche')) regionColor = '#F9C784'; 
+                    return { color: '#1E3A5F', weight: 1.5, fillColor: regionColor, fillOpacity: 0.8 };
+                }
+            }).addTo(map);
+        })
+        .catch(() => console.log("GeoJSON regioni non caricato, mappa base visibile."));
+
+    const phIcon = L.divIcon({ className: 'custom-ph-marker', iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -40] });
+    const markers = []; 
+
+    stores.forEach(store => {
+        const marker = L.marker([store.lat, store.lng], {icon: phIcon}).addTo(map);
+        
+        marker.bindPopup(`<b>${store.name}</b><br>${store.city}<div class="popup-address">${store.indirizzo}</div>`);
+        
+        marker.on('mouseover', function(e) {
+            this.openPopup();
+        });
+        
+        marker.on('click', () => {
+            document.getElementById('storeSelect').value = store.slug;
+            showStoreDetails(store, marker);
+        });
+        
+        markers.push({marker, store});
+    });
+
+    const searchBar = document.getElementById('searchBar');
+    const storeSelect = document.getElementById('storeSelect');
+
+    function populateDropdown(storeList) {
+        storeSelect.innerHTML = '<option value="all">📍 Seleziona uno store...</option>';
+        storeList.forEach(store => {
+            const option = document.createElement('option');
+            option.value = store.slug;
+            option.textContent = `${store.city} - ${store.name}`;
+            storeSelect.appendChild(option);
+        });
+    }
+    
+    populateDropdown(stores);
+
+    searchBar.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filteredStores = stores.filter(s => 
+            s.city.toLowerCase().includes(query) || 
+            s.name.toLowerCase().includes(query) ||
+            s.indirizzo.toLowerCase().includes(query)
+        );
+        
+        populateDropdown(filteredStores);
+
+        const bounds = [];
+        markers.forEach(m => {
+            map.removeLayer(m.marker);
+            if (filteredStores.includes(m.store)) {
+                m.marker.addTo(map);
+                bounds.push([m.store.lat, m.store.lng]);
+            }
+        });
+        
+        if (bounds.length > 0 && query !== '') {
+            map.fitBounds(bounds, {padding: [50, 50], maxZoom: 12});
+        } else if (query === '') {
+            map.setView([41.8719, 12.5674], 6.5);
+        }
+        
+        document.getElementById('placeholderCard').style.display = 'block';
+        document.getElementById('storeCard').classList.remove('active');
+        map.closePopup();
+    });
+
+    storeSelect.addEventListener('change', (e) => {
+        const selectedSlug = e.target.value;
+        if (selectedSlug === 'all') {
+            document.getElementById('placeholderCard').style.display = 'block';
+            document.getElementById('storeCard').classList.remove('active');
+            map.setView([41.8719, 12.5674], 6.5);
+            map.closePopup();
+        } else {
+            const selectedStore = stores.find(s => s.slug === selectedSlug);
+            const m = markers.find(m => m.store.slug === selectedSlug);
+            if (selectedStore && m) {
+                showStoreDetails(selectedStore, m.marker);
+            }
+        }
+    });
+
+    function showStoreDetails(store, markerObject) {
+        document.getElementById('placeholderCard').style.display = 'none';
+        const card = document.getElementById('storeCard'); 
+        card.classList.remove('active'); 
+        
+        setTimeout(() => {
+            document.getElementById('cardGraphicFull').src = store.card_image;
+            document.getElementById('cardLink').href = store.docebo_url;
+            
+            card.classList.add('active');
+            
+            const offset = window.innerWidth > 768 ? -0.01 : 0;
+            map.setView([store.lat, store.lng + offset], 15, {animate: true, duration: 0.5});
+            if(markerObject) markerObject.openPopup();
+            
+        }, 50);
+    }
+</script>
+
+</body>
+</html>
