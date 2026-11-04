@@ -127,7 +127,9 @@
         </div>
 
         <div id="storeCard" class="store-card">
-            <img id="cardGraphicFull" class="card-graphic" src="" alt="Scheda Tecnica Store" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'600\' viewBox=\'0 0 400 600\'><rect fill=\'%23FDF6E9\' width=\'400\' height=\'600\'/><text fill=\'%231E3A5F\' font-family=\'sans-serif\' font-size=\'18\' x=\'50%\' y=\'50%\' text-anchor=\'middle\'>Immagine non trovata.\nCarica la foto in formato PNG\nnella cartella cards.</text></svg>'">
+            <img id="cardGraphicFull" class="card-graphic" src="" alt="Scheda Tecnica Store" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='600' viewBox='0 0 400 600'><rect fill='%23FDF6E9' width='400' height='600'/><text fill='%231E3A5F' font-family='sans-serif' font-size='18' x='50%' y='50%' text-anchor='middle'>Immagine non trovata.
+Carica la foto in formato PNG
+nella cartella cards.</text></svg>'">
             
             <a href="#" id="cardLink" class="btn-video" target="_blank">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -209,11 +211,14 @@
     const map = L.map('map', {
         zoomControl: true, 
         scrollWheelZoom: true, 
-        minZoom: 6.5, 
+        minZoom: 5, // Abbassato per permettere la visione completa su mobile
         maxZoom: 15,
         maxBounds: italyBounds, 
-        maxBoundsViscosity: 1.0
-    }).setView([41.8719, 12.5674], 6.5);
+        maxBoundsViscosity: 1.0 
+    });
+    
+    // Auto-adatta lo zoom allo schermo (PC o Telefono)
+    map.fitBounds(italyBounds);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri', maxZoom: 16
@@ -237,7 +242,7 @@
                 }
             }).addTo(map);
         })
-        .catch(() => console.log("GeoJSON regioni non caricato."));
+        .catch(() => console.log("GeoJSON confini non caricato."));
 
     const phIcon = L.divIcon({ className: 'custom-ph-marker', iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -40] });
     const markers = []; 
@@ -296,7 +301,7 @@
         if (bounds.length > 0 && query !== '') {
             map.fitBounds(bounds, {padding: [50, 50], maxZoom: 12});
         } else if (query === '') {
-            map.setView([41.8719, 12.5674], 6.5);
+            map.fitBounds(italyBounds);
         }
         
         document.getElementById('placeholderCard').style.display = 'block';
@@ -309,7 +314,7 @@
         if (selectedSlug === 'all') {
             document.getElementById('placeholderCard').style.display = 'block';
             document.getElementById('storeCard').classList.remove('active');
-            map.setView([41.8719, 12.5674], 6.5);
+            map.fitBounds(italyBounds);
             map.closePopup();
         } else {
             const selectedStore = stores.find(s => s.slug === selectedSlug);
