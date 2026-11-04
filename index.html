@@ -19,10 +19,11 @@
 
         body, html {
             margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
-            height: 100%; background-color: var(--ph-bg); color: var(--ph-text); overflow: hidden;
+            height: 100%; background-color: var(--ph-bg); color: var(--ph-text);
         }
 
-        .container { display: flex; height: 100vh; flex-direction: row; position: relative; }
+        /* Container principale */
+        .container { display: flex; height: 100vh; flex-direction: row; position: relative; overflow: hidden; }
 
         .map-wrapper {
             flex: 6; height: 100%; position: relative; background-color: #B5D0D0; border-right: 4px solid var(--ph-text);
@@ -31,8 +32,8 @@
         .leaflet-layer { filter: sepia(0.2) saturate(1.2); }
 
         .sidebar {
-            flex: 4; padding: 40px 30px; background-color: var(--ph-bg); overflow-y: auto;
-            box-sizing: border-box; display: flex; flex-direction: column; z-index: 2; position: relative;
+            flex: 4; padding: 30px 20px; background-color: var(--ph-bg); overflow-y: auto;
+            box-sizing: border-box; display: flex; flex-direction: column; z-index: 2; position: relative; height: 100%;
         }
         .sidebar::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -44,23 +45,18 @@
         .header h1 { font-size: 32px; font-weight: 800; margin-top: 0; margin-bottom: 5px; text-transform: uppercase; color: var(--ph-text); letter-spacing: -0.5px; }
         .header h2 { font-size: 16px; font-weight: 600; color: var(--ph-pink); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
 
-        .filters {
-            display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;
-        }
-
+        .filters { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
         .filters input, .filters select {
             width: 100%; padding: 12px 15px; border-radius: 12px; border: 2px solid var(--ph-text);
             font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--ph-text);
             background-color: var(--ph-white); outline: none; box-shadow: 4px 4px 0px rgba(30,58,95,0.1); box-sizing: border-box; transition: all 0.2s;
         }
-        .filters input:focus, .filters select:hover {
-            box-shadow: 2px 2px 0px rgba(30,58,95,0.2); transform: translate(2px, 2px);
-        }
+        .filters input:focus, .filters select:hover { box-shadow: 2px 2px 0px rgba(30,58,95,0.2); transform: translate(2px, 2px); }
         .filters input::placeholder { color: #A0B2C4; font-weight: 500; }
 
         .store-card {
             display: none; animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;
-            text-align: center;
+            text-align: center; margin-bottom: 20px;
         }
         .store-card.active { display: flex; flex-direction: column; align-items: center; }
 
@@ -73,7 +69,7 @@
             display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; max-width: 400px;
             background-color: var(--ph-text); color: var(--ph-white); text-decoration: none; padding: 16px;
             border-radius: 14px; font-weight: 700; font-size: 16px; transition: all 0.2s; box-sizing: border-box;
-            box-shadow: 0 4px 15px rgba(30,58,95,0.2);
+            box-shadow: 0 4px 15px rgba(30,58,95,0.2); margin-bottom: 30px;
         }
         .btn-video:hover { background-color: var(--ph-pink); transform: translateY(-2px); }
 
@@ -91,13 +87,18 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
+        /* Correzioni Mobile */
         @media (max-width: 768px) {
-            .container { flex-direction: column; overflow-y: auto; }
-            .map-wrapper { flex: none; height: 50vh; border-right: none; border-bottom: 4px solid var(--ph-text); }
-            .sidebar { height: auto; flex: none; }
-            body, html { overflow: auto; }
+            .container { flex-direction: column; overflow-y: auto; height: auto; min-height: 100vh; }
+            .map-wrapper { flex: none; height: 45vh; min-height: 350px; border-right: none; border-bottom: 4px solid var(--ph-text); }
+            .sidebar { flex: none; height: auto; padding: 20px 15px; overflow-y: visible; }
+            body, html { overflow: auto; height: auto; }
+            .card-graphic { max-width: 100%; height: auto; }
+            .header h1 { font-size: 26px; }
+            .btn-video { margin-bottom: 20px; }
         }
         
+        .leaflet-popup { max-width: 260px; }
         .leaflet-popup-content-wrapper { border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--ph-text); }
         .leaflet-popup-content b { color: var(--ph-pink); text-transform: uppercase; font-size: 14px; }
         .leaflet-popup-content .popup-address { font-size: 12px; margin-top: 5px; opacity: 0.8; line-height: 1.3; }
@@ -203,16 +204,15 @@
         { "name": "VERONA", "slug": "verona", "city": "VERONA", "region": "Veneto", "lat": 45.43407, "lng": 10.99006, "card_image": "./cards/verona.png", "docebo_url": "https://phacademy.poke-house.com/pages/32/catalogo-corsi?course_code=ALLABOUTUS_VERONA", "indirizzo": "Largo Guido Gonella, 1, 37121 Verona VR" }
     ];
 
-    // Coordinate strettissime: dal punto più a Sud/Ovest a quello più a Nord/Est
     const italyBounds = [[36.0, 6.5], [47.5, 18.5]];
 
     const map = L.map('map', {
         zoomControl: true, 
         scrollWheelZoom: true, 
-        minZoom: 6.5, // Limite zoom indietro
+        minZoom: 6.5, 
         maxZoom: 15,
         maxBounds: italyBounds, 
-        maxBoundsViscosity: 1.0 // Blocca il trascinamento fuori dall'Italia
+        maxBoundsViscosity: 1.0
     }).setView([41.8719, 12.5674], 6.5);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
@@ -237,7 +237,7 @@
                 }
             }).addTo(map);
         })
-        .catch(() => console.log("GeoJSON regioni non caricato, mappa base visibile."));
+        .catch(() => console.log("GeoJSON regioni non caricato."));
 
     const phIcon = L.divIcon({ className: 'custom-ph-marker', iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -40] });
     const markers = []; 
@@ -334,6 +334,10 @@
             const offset = window.innerWidth > 768 ? -0.01 : 0;
             map.setView([store.lat, store.lng + offset], 15, {animate: true, duration: 0.5});
             if(markerObject) markerObject.openPopup();
+            
+            if (window.innerWidth <= 768) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
             
         }, 50);
     }
